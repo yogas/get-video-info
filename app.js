@@ -1,5 +1,20 @@
-const getVideoInfo = require('get-video-info')
+const express = require('express')
+const fileUpload = require('express-fileupload')
+const cors = require('cors');
+const mainRouter = require('./routers/main')
+const codecRouter = require('./routers/codec')
+const port = 3003
 
-getVideoInfo('./assets/android_open_vpn.mp4').then(info => {
-    console.log('video codec:', info.streams[0].codec_name)
-})
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+app.use(fileUpload({
+    useTempFiles : true,
+    tempFileDir : 'tmp'
+}))
+
+app.use('/', mainRouter);
+app.use('/codec', codecRouter);
+
+app.listen(port, () => console.log(`Listening server http://localhost:${port} ...`));
